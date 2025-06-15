@@ -20,7 +20,7 @@ class User extends Authenticatable
      * @var list<string>
      */
 
-    protected $table = 'access.users';
+    protected $table = 'users';
     public $incrementing = false;
 
     protected $keyType = 'string';

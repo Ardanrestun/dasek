@@ -13,7 +13,6 @@ return new class extends Migration
     public function up(): void
     {
 
-        DB::statement('CREATE SCHEMA IF NOT EXISTS public');
 
         Schema::create('kelas', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -39,7 +38,7 @@ return new class extends Migration
 
         Schema::table('siswa', function (Blueprint $table) {
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('access.users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
         Schema::create('guru', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -54,7 +53,7 @@ return new class extends Migration
             $table->timestamps();
         });
         Schema::table('guru', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('access.users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
 

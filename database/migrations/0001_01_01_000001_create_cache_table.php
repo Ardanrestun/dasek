@@ -13,16 +13,15 @@ return new class extends Migration
     public function up(): void
     {
 
-        DB::statement('CREATE SCHEMA IF NOT EXISTS console');
 
         
-        Schema::create('console.cache', function (Blueprint $table) {
+        Schema::create('cache', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->mediumText('value');
             $table->integer('expiration');
         });
 
-        Schema::create('console.cache_locks', function (Blueprint $table) {
+        Schema::create('cache_locks', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->string('owner');
             $table->integer('expiration');
@@ -30,7 +29,7 @@ return new class extends Migration
 
 
 
-        Schema::create('console.jobs', function (Blueprint $table) {
+        Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('queue')->index();
             $table->longText('payload');
@@ -40,7 +39,7 @@ return new class extends Migration
             $table->unsignedInteger('created_at');
         });
 
-        Schema::create('console.job_batches', function (Blueprint $table) {
+        Schema::create('job_batches', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('name');
             $table->integer('total_jobs');
@@ -53,7 +52,7 @@ return new class extends Migration
             $table->integer('finished_at')->nullable();
         });
 
-        Schema::create('console.failed_jobs', function (Blueprint $table) {
+        Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
             $table->text('connection');
@@ -69,11 +68,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('console.cache_locks');
-        Schema::dropIfExists('console.cache');
-        Schema::dropIfExists('console.failed_jobs');
-        Schema::dropIfExists('console.job_batches');
-        Schema::dropIfExists('console.jobs');
-        DB::statement('DROP SCHEMA IF EXISTS console');
+        Schema::dropIfExists('cache_locks');
+        Schema::dropIfExists('cache');
+        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists('job_batches');
+        Schema::dropIfExists('jobs');
     }
 };
