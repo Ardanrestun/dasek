@@ -1,0 +1,551 @@
+<div class="space-y-6">
+    <div class="flex flex-col justify-between space-y-4 sm:flex-row sm:items-center sm:space-y-0">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Daftar Kelas Lengkap</h1>
+            <p class="mt-1 text-sm text-gray-600">Kelola dan lihat daftar kelas beserta siswa dan guru</p>
+        </div>
+    </div>
+
+    <div class="rounded-lg bg-white p-6 shadow-sm">
+        <div class="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div class="max-w-md flex-1">
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" wire:model.live.debounce.300ms="search"
+                        class="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
+                        placeholder="Cari kelas, siswa, atau guru...">
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <label for="perPage" class="text-sm font-medium text-gray-700">Tampilkan:</label>
+                <select wire:model.live="perPage" id="perPage"
+                    class="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-hidden rounded-lg bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            Kelas
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            Nama
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            Tipe
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            ID/NIP/NISN
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            Jenis Kelamin
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                            Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                    @forelse($kelasWithAll as $kelas)
+                        @php
+                            $allMembers = collect();
+
+                            foreach ($kelas->guru as $guru) {
+                                $allMembers->push(
+                                    (object) [
+                                        'id' => $guru->id,
+                                        'nama' => $guru->nama_guru,
+                                        'tipe' => 'guru',
+                                        'identifier' => $guru->nip,
+                                        'jenis_kelamin' => $guru->jenis_kelamin,
+                                        'tempat_lahir' => $guru->tempat_lahir,
+                                        'tanggal_lahir' => $guru->tanggal_lahir,
+                                        'kontak' => $guru->no_telepon,
+                                    ],
+                                );
+                            }
+
+                            foreach ($kelas->siswa as $siswa) {
+                                $allMembers->push(
+                                    (object) [
+                                        'id' => $siswa->id,
+                                        'nama' => $siswa->nama_siswa,
+                                        'tipe' => 'siswa',
+                                        'identifier' => $siswa->nisn,
+                                        'jenis_kelamin' => $siswa->jenis_kelamin,
+                                        'tempat_lahir' => $siswa->tempat_lahir,
+                                        'tanggal_lahir' => $siswa->tanggal_lahir,
+                                        'kontak' => $siswa->no_telepon ?? null,
+                                    ],
+                                );
+                            }
+
+                            $allMembers = $allMembers->sortBy(function ($member) {
+                                return ($member->tipe === 'guru' ? '0' : '1') . $member->nama;
+                            });
+                        @endphp
+
+                        @if ($allMembers->count() > 0)
+                            @foreach ($allMembers as $index => $member)
+                                <tr class="transition-colors duration-150 hover:bg-gray-50">
+
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        @if ($index === 0)
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0">
+                                                    <div
+                                                        class="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                                                        <svg class="h-5 w-5 text-purple-600" fill="none"
+                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                                            </path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        {{ $kelas->nama_kelas }}</div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ $kelas->guru_count }} guru • {{ $kelas->siswa_count }} siswa
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0">
+                                                <div
+                                                    class="{{ $member->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }} flex h-8 w-8 items-center justify-center rounded-full">
+                                                    @if ($member->jenis_kelamin === 'Laki-laki')
+                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                            </path>
+                                                        </svg>
+                                                    @else
+                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                            </path>
+                                                        </svg>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-gray-900">{{ $member->nama }}</div>
+                                                <div class="text-sm text-gray-500">
+                                                    {{ $member->tempat_lahir }},
+                                                    {{ \Carbon\Carbon::parse($member->tanggal_lahir)->format('d M Y') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        @if ($member->tipe === 'guru')
+                                            <span
+                                                class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                                <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                                    </path>
+                                                </svg>
+                                                Guru
+                                            </span>
+                                        @else
+                                            <span
+                                                class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                                <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                                    </path>
+                                                </svg>
+                                                Siswa
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <div class="text-sm text-gray-900">{{ $member->identifier }}</div>
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <span
+                                            class="{{ $member->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }} inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+                                            {{ $member->jenis_kelamin }}
+                                        </span>
+                                    </td>
+
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                                        @if ($index === 0)
+                                            <button wire:click="showDetail('{{ $kelas->id }}')"
+                                                class="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600">
+                                                <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                                    </path>
+                                                </svg>
+                                                Detail Kelas
+                                            </button>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr class="transition-colors duration-150 hover:bg-gray-50">
+                                <td class="whitespace-nowrap px-6 py-4">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div
+                                                class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                                                <svg class="h-5 w-5 text-gray-400" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                                    </path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ $kelas->nama_kelas }}
+                                            </div>
+                                            <div class="text-sm text-gray-500">0 guru • 0 siswa</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500" colspan="4">
+                                    <span class="italic">Kelas kosong</span>
+                                </td>
+                                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                                    <button wire:click="showDetail('{{ $kelas->id }}')"
+                                        class="inline-flex items-center rounded-md bg-gray-600 px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors duration-150 hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
+                                        <svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        Detail Kelas
+                                    </button>
+                                </td>
+                            </tr>
+                        @endif
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                        </path>
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-gray-900">Tidak ada data</h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        @if ($search)
+                                            Tidak ditemukan kelas dengan pencarian "{{ $search }}"
+                                        @else
+                                            Belum ada data kelas.
+                                        @endif
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if ($kelasWithAll->hasPages())
+            <div class="border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                {{ $kelasWithAll->links() }}
+            </div>
+        @endif
+    </div>
+
+    @if ($showDetailModal && $selectedKelas)
+        <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
+            <div class="flex max-h-[90vh] w-full max-w-6xl flex-col rounded-lg bg-white shadow-xl">
+                <div class="flex-shrink-0 border-b border-gray-200 px-4 py-4 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+                                <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Detail Kelas
+                                    {{ $selectedKelas->nama_kelas }}</h3>
+                                <p class="text-sm text-gray-500">
+                                    {{ $selectedKelas->guru->count() }} guru • {{ $selectedKelas->siswa->count() }}
+                                    siswa
+                                </p>
+                            </div>
+                        </div>
+                        <button wire:click="closeDetailModal"
+                            class="text-gray-400 transition-colors hover:text-gray-600">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+                    @if ($selectedKelas->guru->count() > 0)
+                        <div class="mb-8">
+                            <h4 class="mb-4 flex items-center text-lg font-medium text-gray-900">
+                                <svg class="mr-2 h-5 w-5 text-green-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                    </path>
+                                </svg>
+                                Daftar Guru ({{ $selectedKelas->guru->count() }})
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-green-50">
+                                        <tr>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                No</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                Nama Guru</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                NIP</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                TTL</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                Kontak</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach ($selectedKelas->guru as $index => $guru)
+                                            <tr class="transition-colors hover:bg-gray-50">
+                                                <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                                                    {{ $index + 1 }}</td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div
+                                                            class="{{ $guru->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }} flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+                                                            @if ($guru->jenis_kelamin === 'Laki-laki')
+                                                                <svg class="h-4 w-4" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
+                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                                    </path>
+                                                                </svg>
+                                                            @else
+                                                                <svg class="h-4 w-4" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
+                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                                    </path>
+                                                                </svg>
+                                                            @endif
+                                                        </div>
+                                                        <div class="ml-3">
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ $guru->nama_guru }}</div>
+                                                            <span
+                                                                class="{{ $guru->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium">
+                                                                {{ $guru->jenis_kelamin }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                                                    {{ $guru->nip }}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    <div>{{ $guru->tempat_lahir }}</div>
+                                                    <div class="text-xs text-gray-500">
+                                                        {{ \Carbon\Carbon::parse($guru->tanggal_lahir)->format('d M Y') }}
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    @if ($guru->no_telepon)
+                                                        <div class="flex items-center">
+                                                            <svg class="mr-1 h-3 w-3 text-gray-400" fill="none"
+                                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                                                                </path>
+                                                            </svg>
+                                                            <span class="text-xs">{{ $guru->no_telepon }}</span>
+                                                        </div>
+                                                    @else
+                                                        <span class="text-xs italic text-gray-400">-</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($selectedKelas->siswa->count() > 0)
+                        <div>
+                            <h4 class="mb-4 flex items-center text-lg font-medium text-gray-900">
+                                <svg class="mr-2 h-5 w-5 text-blue-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z">
+                                    </path>
+                                </svg>
+                                Daftar Siswa ({{ $selectedKelas->siswa->count() }})
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-blue-50">
+                                        <tr>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                No</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                Nama Siswa</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                NISN</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                NIS</th>
+                                            <th
+                                                class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                                TTL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @foreach ($selectedKelas->siswa as $index => $siswa)
+                                            <tr class="transition-colors hover:bg-gray-50">
+                                                <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                                                    {{ $index + 1 }}</td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center">
+                                                        <div
+                                                            class="{{ $siswa->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-600' : 'bg-pink-100 text-pink-600' }} flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
+                                                            @if ($siswa->jenis_kelamin === 'Laki-laki')
+                                                                <svg class="h-4 w-4" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
+                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                                    </path>
+                                                                </svg>
+                                                            @else
+                                                                <svg class="h-4 w-4" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
+                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                                                    </path>
+                                                                </svg>
+                                                            @endif
+                                                        </div>
+                                                        <div class="ml-3">
+                                                            <div class="text-sm font-medium text-gray-900">
+                                                                {{ $siswa->nama_siswa }}</div>
+                                                            <span
+                                                                class="{{ $siswa->jenis_kelamin === 'Laki-laki' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800' }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium">
+                                                                {{ $siswa->jenis_kelamin }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                                                    {{ $siswa->nisn }}</td>
+                                                <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
+                                                    {{ $siswa->nis }}</td>
+                                                <td class="px-4 py-3 text-sm text-gray-900">
+                                                    <div>{{ $siswa->tempat_lahir }}</div>
+                                                    <div class="text-xs text-gray-500">
+                                                        {{ \Carbon\Carbon::parse($siswa->tanggal_lahir)->format('d M Y') }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
+
+                    @if ($selectedKelas->guru->count() === 0 && $selectedKelas->siswa->count() === 0)
+                        <div class="py-12 text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">Kelas Kosong</h3>
+                            <p class="mt-1 text-sm text-gray-500">Kelas ini belum memiliki guru atau siswa yang
+                                terdaftar.</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex flex-shrink-0 items-center justify-between border-t bg-gray-50 px-4 py-3 sm:px-6">
+                    <div class="text-sm text-gray-500">
+                        Total: {{ $selectedKelas->guru->count() + $selectedKelas->siswa->count() }} anggota
+                    </div>
+                    <div class="flex space-x-3">
+                        <button wire:click="closeDetailModal"
+                            class="rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 transition-colors hover:bg-gray-50">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+</div>
