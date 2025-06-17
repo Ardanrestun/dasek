@@ -61,6 +61,21 @@ return new class extends Migration
             $table->foreignUuid('kelas_id')->constrained('kelas')->onDelete('cascade');
             $table->foreignUuid('guru_id')->constrained('guru')->onDelete('cascade');
         });
+
+        Schema::create('walimurid',function (Blueprint $table){
+            $table->uuid('id')->primary();
+            $table->string('nama_walimurid');
+            $table->string('hubungan');
+            $table->string('pekerjaan')->nullable();
+            $table->string('jenis_kelamin', 10);
+            $table->string('no_telepon');
+            $table->foreignUuid('siswa_id');
+            $table->timestamps();
+        });
+
+      Schema::table('walimurid',function(Blueprint$table){
+        $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
+      });
     }
 
     /**
@@ -68,6 +83,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('walimurid');
         Schema::dropIfExists('kelas_guru');
         Schema::dropIfExists('guru');
         Schema::dropIfExists('siswa');
