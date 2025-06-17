@@ -46,4 +46,9 @@ class Siswa extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+   public function waliMurid()
+    {
+        return $this->hasMany(WaliMurid::class, 'siswa_id');
+    }
 }

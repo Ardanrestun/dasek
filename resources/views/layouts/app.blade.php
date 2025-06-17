@@ -95,6 +95,21 @@
                             </svg>
                             Guru
                         </a>
+
+                        <a href="/walimurid"
+                            class="{{ request()->is('walimurid*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150"
+                            @click="sidebarOpen = false">
+                            <svg class="mr-3 h-5 w-5" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-accessible">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                <path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1" />
+                                <circle cx="12" cy="7.5" r=".5" fill="currentColor" />
+                            </svg>
+                            Wali Murid
+                        </a>
+
                         <a href="/listkelassiswa"
                             class="{{ request()->is('listkelassiswa*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150"
                             @click="sidebarOpen = false">
@@ -115,7 +130,6 @@
                             </svg>
                             List Kelas & Guru
                         </a>
-
                         <a href="/listkelaslengkap"
                             class="{{ request()->is('listkelaslengkap*') ? 'bg-gray-700 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors duration-150"
                             @click="sidebarOpen = false">

@@ -4,11 +4,11 @@ use App\Livewire\Auth\Login;
 use App\Livewire\Data\GuruManager;
 use App\Livewire\Data\KelasManager;
 use App\Livewire\Data\SiswaManager;
+use App\Livewire\Data\WaliMuridManager;
 use App\Livewire\List\All;
 use App\Livewire\List\KelasGuru;
 use App\Livewire\List\KelasSiswa;
 use App\Livewire\Setting\Setting;
-use App\Models\Data\Siswa;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/listkelassiswa', KelasSiswa::class)->name('kelas-siswa');
         Route::get('/listkelasguru', KelasGuru::class)->name('kelas-guru');
         Route::get('/listkelaslengkap',All::class)->name('kelas-lengkap');
+        Route::get('/walimurid',WaliMuridManager::class)->name('walimurid.index');
 
     });
 

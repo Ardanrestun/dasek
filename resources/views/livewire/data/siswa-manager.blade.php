@@ -329,9 +329,9 @@
         </div>
     @endif
 
-    @if ($showDetailModal && $selectedSiswa)
+  @if ($showDetailModal && $selectedSiswa)
         <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black bg-opacity-50 p-4">
-            <div class="w-full max-w-4xl rounded-lg bg-white shadow-xl">
+            <div class="w-full max-w-6xl rounded-lg bg-white shadow-xl">
                 <div class="px-4 py-4 sm:px-6">
                     <div class="mb-4 flex items-center justify-between">
                         <h3 class="text-lg font-medium text-gray-900">
@@ -345,7 +345,7 @@
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                         <div>
                             <h4 class="mb-4 font-medium text-gray-900">Data Pribadi</h4>
                             <dl class="space-y-3">
@@ -422,6 +422,57 @@
                                         {{ $selectedSiswa->updated_at->format('d F Y H:i') }}</dd>
                                 </div>
                             </dl>
+                        </div>
+
+                        <div>
+                            <h4 class="mb-4 font-medium text-gray-900">Data Wali Murid</h4>
+                            @if($selectedSiswa->waliMurid && $selectedSiswa->waliMurid->count() > 0)
+                                <div class="space-y-4">
+                                    @foreach($selectedSiswa->waliMurid as $index => $wali)
+                                        <div class="rounded-lg border border-gray-200 p-3">
+                                            <div class="mb-2 flex items-center justify-between">
+                                                <h5 class="font-medium text-gray-900">Wali {{ $index + 1 }}</h5>
+                                                <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                                    {{ $wali->hubungan }}
+                                                </span>
+                                            </div>
+                                            <dl class="space-y-2">
+                                                <div>
+                                                    <dt class="text-xs font-medium text-gray-500">Nama</dt>
+                                                    <dd class="text-sm text-gray-900">{{ $wali->nama_walimurid }}</dd>
+                                                </div>
+                                                <div>
+                                                    <dt class="text-xs font-medium text-gray-500">Jenis Kelamin</dt>
+                                                    <dd class="text-sm text-gray-900">{{ $wali->jenis_kelamin }}</dd>
+                                                </div>
+                                                @if($wali->pekerjaan)
+                                                    <div>
+                                                        <dt class="text-xs font-medium text-gray-500">Pekerjaan</dt>
+                                                        <dd class="text-sm text-gray-900">{{ $wali->pekerjaan }}</dd>
+                                                    </div>
+                                                @endif
+                                                @if($wali->no_telepon)
+                                                    <div>
+                                                        <dt class="text-xs font-medium text-gray-500">No. Telepon</dt>
+                                                        <dd class="text-sm text-gray-900">{{ $wali->no_telepon }}</dd>
+                                                    </div>
+                                                @endif
+                                            </dl>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="rounded-lg border border-gray-200 p-4 text-center">
+                                    <div class="mx-auto mb-2 h-8 w-8 text-gray-400">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm text-gray-500">Belum ada data wali murid</p>
+                                    <p class="text-xs text-gray-400 mt-1">Data wali murid akan muncul di sini</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

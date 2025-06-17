@@ -241,7 +241,7 @@ class SiswaManager extends Component
     public function show($id)
     {
         try {
-            $this->selectedSiswa = Siswa::with(['kelas', 'user'])->findOrFail($id);
+            $this->selectedSiswa = Siswa::with(['kelas', 'user','waliMurid'])->findOrFail($id);
             $this->showDetailModal = true;
         } catch (\Exception $e) {
             toast()->danger('Error!', 'Siswa tidak ditemukan!')->push();

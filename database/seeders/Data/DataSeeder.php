@@ -7,6 +7,7 @@ use App\Models\Auth\User;
 use App\Models\Data\Guru;
 use App\Models\Data\Kelas;
 use App\Models\Data\Siswa;
+use App\Models\Data\WaliMurid;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -185,6 +186,90 @@ class DataSeeder extends Seeder
             'Denpasar'
         ];
 
+        $namaAyah = [
+            'H. Ahmad',
+            'Bapak Budi',
+            'Drs. Cahyo',
+            'H. Dedi',
+            'Pak Eko',
+            'H. Farid',
+            'Bapak Gunawan',
+            'Pak Hendra',
+            'H. Irfan',
+            'Bapak Joko',
+            'Pak Kurnia',
+            'H. Lukman',
+            'Bapak Maman',
+            'Pak Nanang',
+            'H. Oki',
+            'Bapak Pandu',
+            'Pak Qodir',
+            'H. Rizal',
+            'Bapak Surya',
+            'Pak Tono'
+        ];
+
+        $namaIbu = [
+            'Ibu Aisyah',
+            'Hj. Budi',
+            'Ibu Citra',
+            'Hj. Dewi',
+            'Ibu Erna',
+            'Hj. Fatimah',
+            'Ibu Gita',
+            'Hj. Hani',
+            'Ibu Indira',
+            'Hj. Jamilah',
+            'Ibu Kartika',
+            'Hj. Lina',
+            'Ibu Maya',
+            'Hj. Nisa',
+            'Ibu Olla',
+            'Hj. Putri',
+            'Ibu Qonita',
+            'Hj. Rina',
+            'Ibu Sari',
+            'Hj. Tuti'
+        ];
+
+        $pekerjaanAyah = [
+            'PNS',
+            'Wiraswasta',
+            'Pegawai Swasta',
+            'Petani',
+            'Pedagang',
+            'Guru',
+            'Dokter',
+            'Polisi',
+            'TNI',
+            'Sopir',
+            'Tukang',
+            'Buruh',
+            'Pensiunan',
+            'Karyawan Bank',
+            'Teknisi'
+        ];
+
+        $pekerjaanIbu = [
+            'Ibu Rumah Tangga',
+            'PNS',
+            'Guru',
+            'Perawat',
+            'Pedagang',
+            'Wiraswasta',
+            'Pegawai Swasta',
+            'Bidan',
+            'Karyawan Bank',
+            'Penjahit',
+            'Kasir',
+            'Sekretaris',
+            'Pensiunan',
+            'Petani',
+            'Dokter'
+        ];
+
+        $siswaData = [];
+
         for ($i = 1; $i <= 40; $i++) {
             $namaLengkap = $namaDepan[array_rand($namaDepan)] . ' ' . $namaBelakang[array_rand($namaBelakang)];
             $jenisKelamin = rand(0, 1) ? 'Laki-laki' : 'Perempuan';
@@ -206,7 +291,7 @@ class DataSeeder extends Seeder
                 'role_id' => $siswaRole->id,
             ]);
 
-            Siswa::create([
+            $siswa = Siswa::create([
                 'nama_siswa' => $namaLengkap,
                 'nisn' => $nisn,
                 'nis' => $nis,
@@ -218,6 +303,75 @@ class DataSeeder extends Seeder
                 'kelas_id' => $randomKelas,
                 'user_id' => $user->id,
             ]);
+
+            $siswaData[] = $siswa;
+        }
+
+        foreach ($siswaData as $siswa) {
+            $jumlahWali = rand(1, 2);
+            
+            if ($jumlahWali >= 1) {
+                $hubunganPertama = rand(0, 1) ? 'Ayah' : 'Ibu';
+                
+                if ($hubunganPertama === 'Ayah') {
+                    $namaWali = $namaAyah[array_rand($namaAyah)];
+                    $jenisKelamin = 'Laki-laki';
+                    $pekerjaan = $pekerjaanAyah[array_rand($pekerjaanAyah)];
+                } else {
+                    $namaWali = $namaIbu[array_rand($namaIbu)];
+                    $jenisKelamin = 'Perempuan';
+                    $pekerjaan = $pekerjaanIbu[array_rand($pekerjaanIbu)];
+                }
+
+                WaliMurid::create([
+                    'nama_walimurid' => $namaWali,
+                    'hubungan' => $hubunganPertama,
+                    'pekerjaan' => $pekerjaan,
+                    'jenis_kelamin' => $jenisKelamin,
+                    'no_telepon' => '0813' . rand(10000000, 99999999),
+                    'siswa_id' => $siswa->id,
+                ]);
+            }
+
+            if ($jumlahWali === 2) {
+              
+                $hubunganKedua = $hubunganPertama === 'Ayah' ? 'Ibu' : 'Ayah';
+                
+              
+                if ($hubunganKedua === 'Ayah') {
+                    $namaWali = $namaAyah[array_rand($namaAyah)];
+                    $jenisKelamin = 'Laki-laki';
+                    $pekerjaan = $pekerjaanAyah[array_rand($pekerjaanAyah)];
+                } else {
+                    $namaWali = $namaIbu[array_rand($namaIbu)];
+                    $jenisKelamin = 'Perempuan';
+                    $pekerjaan = $pekerjaanIbu[array_rand($pekerjaanIbu)];
+                }
+
+                if (rand(1, 10) <= 2) { 
+                    $hubunganLain = ['Kakek', 'Nenek', 'Paman', 'Bibi', 'Wali'];
+                    $hubunganKedua = $hubunganLain[array_rand($hubunganLain)];
+                    
+                    if (in_array($hubunganKedua, ['Kakek', 'Paman'])) {
+                        $jenisKelamin = 'Laki-laki';
+                        $namaWali = $namaAyah[array_rand($namaAyah)];
+                        $pekerjaan = $pekerjaanAyah[array_rand($pekerjaanAyah)];
+                    } else {
+                        $jenisKelamin = 'Perempuan';
+                        $namaWali = $namaIbu[array_rand($namaIbu)];
+                        $pekerjaan = $pekerjaanIbu[array_rand($pekerjaanIbu)];
+                    }
+                }
+
+                WaliMurid::create([
+                    'nama_walimurid' => $namaWali,
+                    'hubungan' => $hubunganKedua,
+                    'pekerjaan' => $pekerjaan,
+                    'jenis_kelamin' => $jenisKelamin,
+                    'no_telepon' => '0814' . rand(10000000, 99999999),
+                    'siswa_id' => $siswa->id,
+                ]);
+            }
         }
     }
 }
